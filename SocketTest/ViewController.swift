@@ -21,7 +21,15 @@ class ViewController: UIViewController {
      
         manager.connectPtt(successHandler: {
             
-            manager.logingPtt()
+            manager.logingPtt(successHandler: {
+                
+                print("登入成功")
+                
+            }, failureHandler: { (error) in
+                
+                print("登入失敗")
+                
+            })
             
         }, failureHandler: { error in
             

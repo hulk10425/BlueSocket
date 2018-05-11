@@ -14,7 +14,7 @@ enum PTTError: Error {
     case notEncoding
     case notLogin
 }
-
+//todo 在沒有反應的情況下，應該要自動重新登入，要不然會TimeOut 掛掉
 class PTTManager: NSObject {
     
     var socket: Socket?
@@ -88,7 +88,7 @@ class PTTManager: NSObject {
 
     }
     
-    func logingPtt() {
+    func logingPtt(successHandler:@escaping(() -> Void), failureHandler:@escaping ((_ error: PTTError) -> Void)) {
         
         do {
             try socket?.write(from: accout)
@@ -105,29 +105,30 @@ class PTTManager: NSObject {
         for _ in 0...10 {
             
             var loginReadData = Data(capacity: 1024 * 10)
-            
-//            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
 
-                    let byteRead = try! self.socket?.read(into: &loginReadData) ?? 0
+            let byteRead = try! self.socket?.read(into: &loginReadData) ?? 0
                     
-                    if byteRead > 0 {
+            if byteRead > 0 {
                         
-                        if let response = String(data: loginReadData , encoding: String.Encoding(rawValue: CFStringConvertEncodingToNSStringEncoding(CFStringEncoding(CFStringEncodings.big5.rawValue)))) {
+                if let response = String(data: loginReadData , encoding: String.Encoding(rawValue: CFStringConvertEncodingToNSStringEncoding(CFStringEncoding(CFStringEncodings.big5.rawValue)))) {
                             
-                            print(response)
-                        } else {
-                            print("Error decoding response...")
-                          
-                        }
+                    print(response)
+                    
+                    try! socket?.write(from: "\r\n")
+                    
+                    if response.contains("主功能表") || response.contains("請按任意鍵繼續"){
+                        
+                        successHandler()
                         
                     }
-//            }
-    
+                    
+                }
+            }
+
         }
         
-            
+        failureHandler(PTTError.notLogin)
         
-  
     }
 
 }
