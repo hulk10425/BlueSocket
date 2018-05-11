@@ -17,9 +17,15 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        initSocket()
-        
-        connectPtt()
+        let manager = PTTManager()
+     
+        manager.connectPtt(successHandler: {
+            
+            //manager.logingPtt()
+            
+        }, failureHandler: { error in
+            
+        })
         
         
         
