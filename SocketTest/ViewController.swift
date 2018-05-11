@@ -21,7 +21,7 @@ class ViewController: UIViewController {
      
         manager.connectPtt(successHandler: {
             
-            //manager.logingPtt()
+            manager.logingPtt()
             
         }, failureHandler: { error in
             
