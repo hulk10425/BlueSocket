@@ -15,6 +15,7 @@ enum PTTError: Error {
     case notLogin
     case writeError
     case cantEnterMyMail
+    case readError
 }
 //todo 在沒有反應的情況下，應該要自動重新登入，要不然會TimeOut 掛掉
 class PTTManager: NSObject {
@@ -105,15 +106,26 @@ class PTTManager: NSObject {
         for _ in 0...10 {
             
             var loginReadData = Data(capacity: 1024 * 10)
-
-            let byteRead = try! self.socket?.read(into: &loginReadData) ?? 0
-                    
+            var byteRead = 0
+            
+            do {
+                
+                byteRead = try self.socket?.read(into: &loginReadData) ?? 0
+                
+            } catch {
+                failureHandler(PTTError.readError)
+            }
+          
             if byteRead > 0 {
                         
                 if let response = String(data: loginReadData , encoding: String.Encoding(rawValue: CFStringConvertEncodingToNSStringEncoding(CFStringEncoding(CFStringEncodings.big5.rawValue)))) {
                     
-                    try! socket?.write(from: "\r\n")
-                    
+                    do {
+                         try socket?.write(from: "\r\n")
+                    } catch {
+                        failureHandler(PTTError.writeError)
+                    }
+                   
                     if response.contains("主功能表") || response.contains("請按任意鍵繼續"){
                         print("****登入成功")
                         successHandler()
@@ -160,15 +172,19 @@ class PTTManager: NSObject {
         
         for _ in 0...10 {
             
+            var byteRead = 0
+            
             var messageMenuData = Data(capacity: 1024 * 10)
             
-            let byteRead = try! self.socket?.read(into: &messageMenuData) ?? 0
+            do {
+                byteRead = try self.socket?.read(into: &messageMenuData) ?? 0
+            } catch {
+                failureHandler(PTTError.readError)
+            }
             
             if byteRead > 0 {
                 
                 if let response = String(data: messageMenuData , encoding: String.Encoding(rawValue: CFStringConvertEncodingToNSStringEncoding(CFStringEncoding(CFStringEncodings.big5.rawValue)))) {
-                    
-                    print(response)
                     
                     if response.contains("信箱"){
                         print("****已到我的信箱目錄")
@@ -200,8 +216,14 @@ class PTTManager: NSObject {
             
             var messageMenuData = Data(capacity: 1024 * 10)
             
-            let byteRead = try! self.socket?.read(into: &messageMenuData) ?? 0
+            var byteRead = 0
             
+            do {
+                byteRead = try self.socket?.read(into: &messageMenuData) ?? 0
+            } catch {
+                failureHandler(PTTError.readError)
+            }
+ 
             if byteRead > 0 {
                 
                 if let response = String(data: messageMenuData , encoding: String.Encoding(rawValue: CFStringConvertEncodingToNSStringEncoding(CFStringEncoding(CFStringEncodings.big5.rawValue)))) {
@@ -221,133 +243,46 @@ class PTTManager: NSObject {
     
     }
     
+    
     func sendPrivateMessage(user: String, mailContent: String, successHandler:@escaping(() -> Void), failureHandler:@escaping ((_ error: PTTError) -> Void)) {
         
-        do {
-            _ = try socket?.write(from: user)
-            _ = try socket?.write(from: "\r\n")
+        self.enterUserName(user: user, successHandler: {
             
-        } catch {
-            
-            failureHandler(PTTError.writeError)
-            
-        }
-        
-        for _ in 0...10 {
-            
-            var messageMenuData = Data(capacity: 1024 * 10)
-            
-            let byteRead = try! self.socket?.read(into: &messageMenuData) ?? 0
-            
-            if byteRead > 0 {
+            self.enterMailContent(mailContent: mailContent, successHandler: {
                 
-                if let response = String(data: messageMenuData , encoding: String.Encoding(rawValue: CFStringConvertEncodingToNSStringEncoding(CFStringEncoding(CFStringEncodings.big5.rawValue)))) {
+                self.sendMail(successHandler: {
                     
-                    print(response)
-                    
-                    if response.contains("主題"){
+                    do {
                         
+                        _ = try self.socket?.write(from: "s")
                         
+                        _ = try self.socket?.write(from: "\r\n")
                         
-                    }
-                    
-                }
-            }
-            
-        }
-        
-    
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        // MARK: 輸入寄信內容
-        do {
-            _ = try socket?.write(from: mailContent)
-            _ = try socket?.write(from: "\r\n")
-            _ = try socket?.write(from: "\r\n")
-            
-        } catch {
-            
-            failureHandler(PTTError.writeError)
-        }
-        
-        for _ in 0...10 {
-            
-            var messageMenuData = Data(capacity: 1024 * 10)
-            
-            let byteRead = try! self.socket?.read(into: &messageMenuData) ?? 0
-            
-            if byteRead > 0 {
-                
-                if let response = String(data: messageMenuData , encoding: String.Encoding(rawValue: CFStringConvertEncodingToNSStringEncoding(CFStringEncoding(CFStringEncodings.big5.rawValue)))) {
-                    
-                    print(response)
-                    //MARK: 檢查信件內容
-                    if !response.contains("意願"){
+                    } catch {
                         
                         failureHandler(PTTError.writeError)
                         
                     }
                     
-                }
-            }
-            
-        }
-        
-        var myInt = [24]
-        let myIntData = Data(bytes: &myInt,
-                             count: MemoryLayout.size(ofValue: myInt))
-        
-        for _ in 0...5 {
-            
-            do {
-                _ = try socket?.write(from: myIntData)
-            } catch {
-                failureHandler(PTTError.writeError)
-            }
-        }
-        
-        for _ in 0...10 {
-            
-            var messageMenuData = Data(capacity: 1024 * 10)
-            
-            let byteRead = try! self.socket?.read(into: &messageMenuData) ?? 0
-            
-            if byteRead > 0 {
+                    
+                    successHandler()
+          
+                }, failureHandler: { (error) in
+                    failureHandler(error)
+                })
                 
-                if let response = String(data: messageMenuData , encoding: String.Encoding(rawValue: CFStringConvertEncodingToNSStringEncoding(CFStringEncoding(CFStringEncodings.big5.rawValue)))) {
-                    
-                    print(response)
-                    //MARK: 檢查有無按 Ctrl + p
-                    if !response.contains("案處"){
-                        
-                        failureHandler(PTTError.writeError)
-                        
-                    }
-                    
-                }
-            }
+         
+            }, failureHandler: { (error) in
+                failureHandler(error)
+            })
             
+            
+            
+        }) { (error) in
+            
+            failureHandler(error)
         }
         
-        do {
-            
-            _ = try socket?.write(from: "s")
-            
-        } catch {
-            
-            failureHandler(PTTError.writeError)
-            
-        }
-        
-        
-        successHandler()
  
  
     }

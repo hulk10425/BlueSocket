@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2E40058120AA88110024B537 /* PTTManager + Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E40058020AA88110024B537 /* PTTManager + Extension.swift */; };
 		2EA9BE1B20A3F85300C75FDB /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EA9BE1A20A3F85300C75FDB /* AppDelegate.swift */; };
 		2EA9BE1D20A3F85300C75FDB /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EA9BE1C20A3F85300C75FDB /* ViewController.swift */; };
 		2EA9BE2020A3F85300C75FDB /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2EA9BE1E20A3F85300C75FDB /* Main.storyboard */; };
@@ -57,6 +58,7 @@
 		03385F987CB5B7F9A6D28A4F /* Pods_SocketTestTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SocketTestTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		12A03F1C5B8526DB9D95F425 /* Pods-SocketTest.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SocketTest.release.xcconfig"; path = "Pods/Target Support Files/Pods-SocketTest/Pods-SocketTest.release.xcconfig"; sourceTree = "<group>"; };
 		27CA5F59AE404DCB5F29DC22 /* Pods_SocketTest.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SocketTest.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		2E40058020AA88110024B537 /* PTTManager + Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PTTManager + Extension.swift"; sourceTree = "<group>"; };
 		2EA9BE1720A3F85300C75FDB /* SocketTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SocketTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2EA9BE1A20A3F85300C75FDB /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		2EA9BE1C20A3F85300C75FDB /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -144,6 +146,7 @@
 				2EA9BE2620A3F85500C75FDB /* Info.plist */,
 				2EA9BF0020A52DAD00C75FDB /* Extension.swift */,
 				2EA9BF0620A52DF200C75FDB /* PTTManager.swift */,
+				2E40058020AA88110024B537 /* PTTManager + Extension.swift */,
 			);
 			path = SocketTest;
 			sourceTree = "<group>";
@@ -437,6 +440,7 @@
 			files = (
 				2EA9BF0120A52DAD00C75FDB /* Extension.swift in Sources */,
 				2EA9BE1D20A3F85300C75FDB /* ViewController.swift in Sources */,
+				2E40058120AA88110024B537 /* PTTManager + Extension.swift in Sources */,
 				2EA9BF0720A52DF200C75FDB /* PTTManager.swift in Sources */,
 				2EA9BE1B20A3F85300C75FDB /* AppDelegate.swift in Sources */,
 			);

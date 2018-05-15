@@ -29,8 +29,12 @@ class ViewController: UIViewController {
                         
                         manager.enterMyMail(successHandler: {
                             
-                            manager.sendPrivateMessage(user: "re886430", mailContent: "test123", successHandler: {
+                            manager.sendPrivateMessage(user: "re886430", mailContent: "test123意願", successHandler: {
                                 print("成功寄信")
+                                
+                                
+                                manager.socket?.close()
+                               
                             }, failureHandler: { (error) in
                                 print(error)
                             })
