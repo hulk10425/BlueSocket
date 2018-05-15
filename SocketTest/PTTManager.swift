@@ -13,6 +13,8 @@ enum PTTError: Error {
     case notConnect
     case notEncoding
     case notLogin
+    case writeError
+    case cantEnterMyMail
 }
 //todo 在沒有反應的情況下，應該要自動重新登入，要不然會TimeOut 掛掉
 class PTTManager: NSObject {
@@ -36,7 +38,7 @@ class PTTManager: NSObject {
     }
     
     func connectPtt(successHandler:@escaping(() -> Void), failureHandler:@escaping ((_ error: PTTError) -> Void)) {
-        var readData = NSMutableData(capacity: 1024 * 10)
+        let readData = NSMutableData(capacity: 1024 * 10)
         
         //連線成功
         do {
@@ -130,5 +132,66 @@ class PTTManager: NSObject {
         failureHandler(PTTError.notLogin)
         
     }
+    
+    func goToMainMenu(failureHandler:((_ error: PTTError) -> Void)?) {
+        
+        
+        for _ in 1...10 {
+            
+            do {
+              _ = try socket?.write(from: "q")
+            } catch {
+                failureHandler!(PTTError.writeError)
+            }
+    
+        }
+    }
+    
+    func goToMyMail(successHandler:@escaping(() -> Void), failureHandler:@escaping ((_ error: PTTError) -> Void)) {
+        
+        do {
+            _ = try socket?.write(from: "m")
+            
+            _ = try socket?.write(from: "\r\n")
+            
+        } catch {
+            
+            failureHandler(PTTError.writeError)
+        }
+        
+        for _ in 0...10 {
+            
+            var messageMenuData = Data(capacity: 1024 * 10)
+            
+            let byteRead = try! self.socket?.read(into: &messageMenuData) ?? 0
+            
+            if byteRead > 0 {
+                
+                if let response = String(data: messageMenuData , encoding: String.Encoding(rawValue: CFStringConvertEncodingToNSStringEncoding(CFStringEncoding(CFStringEncodings.big5.rawValue)))) {
+                    
+                    print(response)
+                    
+                    if response.contains("信箱"){
+                        
+                        successHandler()
+                        
+                    }
+                    
+                }
+            }
+            
+        }
+        
+        failureHandler(PTTError.cantEnterMyMail)
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
 
 }

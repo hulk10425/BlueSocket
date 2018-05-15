@@ -23,7 +23,20 @@ class ViewController: UIViewController {
             
             manager.logingPtt(successHandler: {
                 
-                print("登入成功")
+                manager.goToMainMenu(failureHandler: { (error) in
+                    print(error)
+                })
+                
+                manager.goToMyMail(successHandler: {
+                    
+                    
+                    
+                    
+                }, failureHandler: { (error) in
+                    print(error)
+                })
+                
+                
                 
             }, failureHandler: { (error) in
                 
