@@ -23,21 +23,33 @@ class ViewController: UIViewController {
             
             manager.logingPtt(successHandler: {
                 
-                manager.goToMainMenu(failureHandler: { (error) in
-                    print(error)
-                })
-                
-                manager.goToMyMail(successHandler: {
+                manager.goToMainMenu(successHandler: {
                     
+                    manager.goToMyMailMenu(successHandler: {
+                        
+                        manager.enterMyMail(successHandler: {
+                            
+                            manager.sendPrivateMessage(user: "re886430", mailContent: "test123", successHandler: {
+                                print("成功寄信")
+                            }, failureHandler: { (error) in
+                                print(error)
+                            })
+                            
+                            
+                        }, failureHandler: { (error) in
+                            print(error)
+                        })
+                        
+                    }, failureHandler: { (error) in
+                        print(error)
+                    })
                     
                     
                     
                 }, failureHandler: { (error) in
                     print(error)
                 })
-                
-                
-                
+ 
             }, failureHandler: { (error) in
                 
                 print("登入失敗")
@@ -47,9 +59,7 @@ class ViewController: UIViewController {
         }, failureHandler: { error in
             
         })
-        
-        
-        
+
     }
     
     func initSocket() {
