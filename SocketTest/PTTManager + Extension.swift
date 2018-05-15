@@ -61,11 +61,13 @@ extension PTTManager {
        
         do {
             //標題
-            _ = try socket?.write(from: mailContent)
+            let mailData = mailContent.big5Data
+            _ = try socket?.write(from: mailData!)
             _ = try socket?.write(from: "\r\n")
             _ = try socket?.write(from: "\r\n")
+            
             //內文
-            _ = try socket?.write(from: mailContent)
+            _ = try socket?.write(from: mailData!)
             _ = try socket?.write(from: "\r\n")
             
         } catch {
